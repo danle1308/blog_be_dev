@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
@@ -14,7 +14,8 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded( {extended: true} ));
+app.use(express.text())
 
 // template engine
 app.engine('hbs', engine({ extname: '.hbs' }));
@@ -24,14 +25,20 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // console.log('__filename', __filename);
-// console.log('__dirname', __dirname);
-
 // connect to db
 mongoDbCustom.connect()
 
 app.set("views", path.join(__dirname, '/resources/views'));
 
 routes(app)
+
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error(err.stack); // Log lỗi
+    res.status(err.status || 500).json({
+        message: err.message || "Internal Server Error",
+        errorCode: 1
+    });
+});
 
 
 app.listen(PORT, () => {
