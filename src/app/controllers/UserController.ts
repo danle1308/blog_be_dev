@@ -31,6 +31,20 @@ class UserControllers {
         }
     }
 
+    async handlerRequestOtp(req: Request, res: Response, next: NextFunction) {
+        const userData = await User.find({})
+        console.log('userData', userData)
+        try {
+            const value = req.body
+            const emailsUser = userData.map(user => user.email)
+            console.log('emailsUser', emailsUser)
+            // const create = await User.create(value)
+            // res.status(200).json(create)
+        } catch (error) {
+            next(error)
+        }
+    }
+
 
     
 

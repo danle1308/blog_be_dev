@@ -12,4 +12,7 @@ router.get('/getCourseByIdUser/:idUser', userControllers.getCoursesByIdUser)
 // create user
 router.post('/create', userControllers.handlerCreateUser)
 
+// create user
+router.get('/auth/register', userControllers.handlerRequestOtp)
+
 export default router
