@@ -40,7 +40,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     });
 });
 
-
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
