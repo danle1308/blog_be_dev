@@ -33,7 +33,7 @@ app.set("views", path.join(__dirname, '/resources/views'));
 routes(app)
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.error(err.stack); // Log lỗi
+    console.error(err.stack);
     res.status(err.status || 500).json({
         message: err.message || "Internal Server Error",
         errorCode: 1
