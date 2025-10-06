@@ -85,7 +85,6 @@ class UserControllers {
             const isMatchPassword = await bcrypt.compare(password, dataByEmail.password)
 
             if (!isMatchPassword) {
-                console.log('sai pass')
                 return res.status(400).json({
                     message: 'Password is wrong',
                     errorCode: 1,
