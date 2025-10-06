@@ -1,23 +1,28 @@
-import { Resend } from 'resend';
+import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const password = process.env.PASSWORD_SMTP;
 
 export const sendOtpEmail = async (to: string, otp: string) => {
-    try {
-        const result = await resend.emails.send({
-            from: 'Your App <noreply@danle.com>', 
-            to,
-            subject: 'Your OTP Code',
-            html: `<p>Your OTP code is: <strong>${otp}</strong>. It expires in 5 minutes.</p>`,
-        });
+    const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+            user: "ldhdan.20it2@vku.udn.vn",
+            pass: password,
+        },
+    });
 
-        console.log('Email sent:', result);
-        return true;
-    } catch (err) {
-        console.error('Failed to send email:', err);
-        return false;
-    }
+    await transporter.sendMail({
+        from: '"DanLeCloneTrello" <ldhdan.20it2@vku.udn.vn>',
+        to,
+        subject: "Your OTP Code",
+        text: `Your OTP is: ${otp}`,
+        html: `<h2>Your OTP is: <b>${otp}</b></h2>`,
+    });
+
+    console.log("Email sent!");
 };

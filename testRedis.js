@@ -15,8 +15,8 @@ export const redis = new Redis({
 (async () => {
     try {
         await redis.ping();
-        console.log("Upstash Redis connected successfully!");
+        console.log("✅ Upstash Redis connected successfully!");
     } catch (err) {
-        console.error("Failed to connect to Upstash Redis:", err);
+        console.error("❌ Failed to connect to Upstash Redis:", err);
     }
 })();
