@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const BoardSchema = new Schema({
     nameBoard: { type: String, maxLength: 255, required: true },
-    collection: [
+    boardCollection: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Collection",

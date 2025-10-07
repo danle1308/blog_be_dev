@@ -4,6 +4,7 @@ import { redis } from '../../config/redis/redis.js';
 import { sendOtpEmail } from "../../services/sendOtpEmail.js";
 import { randomUUID } from "crypto";
 import bcrypt from "bcryptjs";
+import { createJwtToken } from "../../services/jwtService.js";
 
 let otp = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -17,24 +18,11 @@ class UserControllers {
         }
     }
 
-    async getCoursesByIdUser(req: Request, res: Response, next: NextFunction) {
-        try {
-            const idUser = req.params.idUser;
-            const courseDataByIdUser = await User.findById(idUser).populate("courseId")
-            res.status(200).json({ courseDataByIdUser, message: 'get data success!', errorCode: 0 })
-        } catch (error) {
-            next(error)
-        }
-    }
-
     async handlerRequestOtp(req: Request, res: Response, next: NextFunction) {
-
         try {
             const { userName, email, password } = req.body
             const normalizedEmail = email.trim().toLowerCase();
-
             const otpToken = `otp:${randomUUID()}`;
-
             const setData = await redis.set(otpToken, JSON.stringify({
                 userName: userName,
                 email: normalizedEmail,
@@ -46,7 +34,6 @@ class UserControllers {
                 message: "OTP sent to email",
                 otpToken
             });
-
         } catch (error) {
             next(error)
         }
@@ -54,7 +41,6 @@ class UserControllers {
 
 
     async handlerRegister(req: Request, res: Response, next: NextFunction) {
-
         try {
             const { userName, email, password } = req.body;
             const hashedPassword = await bcrypt.hash(password, 10)
@@ -70,12 +56,9 @@ class UserControllers {
     }
 
     async handlerLogin(req: Request, res: Response, next: NextFunction) {
-
         try {
             const { email, password } = req.body;
-
             const dataByEmail = await User.findOne({ email: email.trim().toLowerCase() })
-
             if (!dataByEmail) {
                 return res.status(400).json({
                     message: 'Email not found',
@@ -83,14 +66,20 @@ class UserControllers {
                 })
             }
             const isMatchPassword = await bcrypt.compare(password, dataByEmail.password)
-
             if (!isMatchPassword) {
                 return res.status(400).json({
                     message: 'Password is wrong',
                     errorCode: 1,
                 })
             }
+            const userIdDb = dataByEmail._id.toString();
+            const userEmail = dataByEmail.email;
+            const getJwtToken = createJwtToken({
+                userId: userIdDb,
+                email: userEmail,
+            })
             res.status(200).json({
+                jwtToken: getJwtToken,
                 message: 'Login success!',
                 errorCode: 0,
             })
@@ -99,6 +88,20 @@ class UserControllers {
         }
     }
 
+
+    async getDataUserByIdUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const dataReceived = req.user;
+            console.log('dataReceived', dataReceived?.userId);
+
+            res.json({
+                dataReceived,
+                message: 'getDataUserByIdUser success',
+            })
+        } catch (error) {
+            next(error);
+        }
+    }
 
 
 

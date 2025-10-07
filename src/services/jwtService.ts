@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -9,9 +9,34 @@ interface JwtPayload {
 }
 
 export const createJwtToken = (payload: JwtPayload): string => {
-    return jwt.sign(
-      payload,
-      process.env.JWT_SECRET!,
-      { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
-    );
-  };
+
+  const secret = process.env.JWT_SECRET;
+
+  if (!secret) {
+    throw new Error("JWT_SECRET is not defined");
+  }
+
+  const options: SignOptions = {
+    expiresIn: "1h",
+  }
+
+  return jwt.sign(
+    payload,
+    secret,
+    options,
+  );
+};
+
+export const verifyJwtToken = (token: string): JwtPayload | any => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET is not defined");
+  }
+  try {
+    const decode = jwt.verify(token, secret) as JwtPayload
+    return decode;
+  } catch (error) {
+    console.error("Invalid or expired token:", error);
+    return null;
+  }
+}
