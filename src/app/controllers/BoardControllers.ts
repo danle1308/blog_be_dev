@@ -1,6 +1,7 @@
 import { Board } from "../models/Board.js";
 import { NextFunction, Request, Response } from "express";
 import { User } from "../models/User.js";
+import { ROLE } from "../constants/role.js";
 
 class BoardControllers {
 
@@ -14,7 +15,7 @@ class BoardControllers {
         }
     }
 
-    async handlerDeleteOne(req: Request, res: Response, next: NextFunction) {
+    async handlerDeleteBoard(req: Request, res: Response, next: NextFunction) {
         try {
             const id = req.params.id;
             const deleteById = await Board.deleteOne({ _id: id })
@@ -29,6 +30,32 @@ class BoardControllers {
             next(error)
         }
     }
+
+    async handlerCreateBoard(req: Request, res: Response, next: NextFunction) {
+        try {
+            const title = req.body.nameBoard;
+            const userIdCreate = req.user?.userId;
+            const onCreate = await Board.create({
+                nameBoard: title,
+                ownerBoard: userIdCreate,
+                members: [
+                    {
+                        user: userIdCreate,
+                        role: ROLE.ADMIN,
+                    }
+                ]
+            })
+            res.status(200).json({
+                onCreate,
+                message: 'Create board Success!',
+                errorCode: 0,
+            });
+        } catch (error) {
+            next(error)
+        }
+    }
+
+
 }
 
 export default new BoardControllers();

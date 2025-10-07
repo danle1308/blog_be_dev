@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { ROLE } from "../constants/role.js";
 
 const Schema = mongoose.Schema;
 
@@ -10,13 +11,26 @@ const BoardSchema = new Schema({
             ref: "Collection",
             default: [],
         }
-    ]
-    ,
-    members: [
+    ],
+    ownerBoard:
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            default: [],
+            required: true,
+        }
+    ,
+    members: [
+        {
+            _id: false,
+            user: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+                required: true,
+            },
+            role: {
+                type: Number,
+                enum: Object.values(ROLE),
+            },
         }
     ],
 })
