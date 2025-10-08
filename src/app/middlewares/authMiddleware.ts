@@ -14,7 +14,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         const verifyToken = verifyJwtToken(tokenReceived);
         if (!verifyToken) {
             return res.status(401).json({ 
-                message: "Invalid or expired token",
+                message: "Invalid or expired token, please login to use",
                 errorCode: 1,
             });
         }
@@ -23,7 +23,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     } catch (error) {
         console.error("JWT verification error:", error);
         return res.status(401).json({ 
-            message: "Invalid or expired token",
+            message: "JWT verification error",
             errorCode: 1,
         });
     }
