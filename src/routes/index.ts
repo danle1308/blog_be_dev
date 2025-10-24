@@ -1,17 +1,17 @@
 import { Express } from "express-serve-static-core"
-import searchRouter from "./search.js"
-import sourceRouter from "./sources.js"
+import boardRouter from "./board.js"
 import updateRouter from "./update.js"
 import userRouter from "./user.js"
+import collectionRouter from "./collection.js"
 
 function routes(app: Express) {
-    app.use('/search', searchRouter);
+    app.use('/user', userRouter);
     
-    app.use('/sources', sourceRouter);
-
+    app.use('/board', boardRouter);
+    
     app.use('/update', updateRouter);
 
-    app.use('/user', userRouter);
+    app.use('/collection', collectionRouter);
 }
 
 export default routes

@@ -1,23 +1,27 @@
 import express from "express"
-import userControllers from "../app/controllers/UserController.js";
-import { checkEmailExist } from "../app/middlewares/checkEmailExist.js";
+// import userControllers from "../app/controllers/UserController.js";
+import { UserController } from "../app/controllers/user/index.js";
+import { checkEmailAndPasswordExist } from "../app/middlewares/checkEmailAndPasswordExist.js";
 import { checkOtp } from "../app/middlewares/checkOtp.js";
+import { authMiddleware } from "../app/middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// get all user data
-router.get('/', userControllers.index)
+// get all users
+// router.get('/', UserController.index)
 
-// get all course data by id user
-router.get('/getCourseByIdUser/:idUser', userControllers.getCoursesByIdUser)
+// get all data by id user
+router.get('/profile', authMiddleware, UserController.getDataUser)
 
-// send otp
-router.post('/auth/send-otp', checkEmailExist, userControllers.handlerRequestOtp)
+// send otp step 1
+// NEED userName, email, password
+router.post('/send-otp', checkEmailAndPasswordExist, UserController.handleRequestOtp)
 
-// create user
-router.post('/auth/register', checkOtp, userControllers.handlerRegister)
+// create user step 2
+// NEED otpToken, otp from email
+router.post('/register', checkOtp, UserController.handleRegister)
 
-// create user
-router.post('/auth/login', userControllers.handlerLogin)
+// login for user
+router.post('/login', UserController.handleLogin)
 
 export default router

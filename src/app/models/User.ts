@@ -19,8 +19,7 @@ const UserSchema = new Schema({
             ref: "Board",
             default: [],
         }
-    ]
-    
+    ],
 })
 
 export const User = mongoose.model("User", UserSchema);
